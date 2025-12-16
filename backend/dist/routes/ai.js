@@ -1,0 +1,31 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const OmniMind_1 = require("../agents/OmniMind");
+const router = (0, express_1.Router)();
+const omniMind = new OmniMind_1.OmniMind();
+router.post('/chat', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { userId, message } = req.body;
+        if (!userId || !message) {
+            res.status(400).json({ error: 'Missing userId or message' });
+            return;
+        }
+        const response = yield omniMind.processMessage(userId, message);
+        res.json(response);
+    }
+    catch (error) {
+        console.error('Error processing AI message:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}));
+exports.default = router;
